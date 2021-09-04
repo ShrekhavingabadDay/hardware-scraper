@@ -127,7 +127,7 @@ class HardverApro:
 
             self.ad_list = None
 
-            self.url = self.set_url_offset(current_offset)
+            self.set_url_offset(current_offset)
 
             self.reload()
 

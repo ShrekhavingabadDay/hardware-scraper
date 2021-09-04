@@ -7,7 +7,7 @@ bot = commands.Bot(command_prefix="!")
 
 env = dotenv.getenv()
 
-waiting_time = 20
+waiting_time = 60
 
 ha_scraper = hardverapro.hardverapro_scraper(
                 env.get("HARDVERAPRO"),
@@ -33,6 +33,8 @@ async def _background_task():
 
         if message_to_send != '':
             await channel.send('Új hirdetések\n' + message_to_send)
+        else:
+            await channel.send('Nincs új hirdetés')
 
         await asyncio.sleep(waiting_time)
 

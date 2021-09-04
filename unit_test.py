@@ -19,6 +19,8 @@ ha_scraper = hardverapro.hardverapro_scraper(
 
 ha_scraper.init_session("uj")
 
+ha_scraper.scrape_all_links()
+
 def create_link_message():
     all_links = ha_scraper.scrape_all_links()
     return '\n.\n.'.join(all_links)

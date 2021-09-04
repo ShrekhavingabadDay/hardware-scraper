@@ -98,6 +98,13 @@ class HardverApro:
 
         self.result_count = [int(s) for s in full_text.split() if s.isdigit()][0]
 
+    def set_url_offset(self, offset):
+        param_index = None
+        for i in range(len(self.url)-1, 0):
+            if self.url[i] == "=":
+                param_index = i+1
+        self.url = self.url[:param_index] + str(offset)
+
     def scrape_all_links(self):
 
         self.get_result_count()
@@ -120,7 +127,7 @@ class HardverApro:
 
             self.ad_list = None
 
-            self.url = self.url + "&offset=" + str(current_offset)
+            self.url = self.set_url_offset(current_offset)
 
             self.reload()
 

@@ -78,7 +78,7 @@ class HardverApro:
         self.construate_modosit_url()
 
     def reload(self):
-        print("reloading: " + self.url)
+        # print("reloading: " + self.url)
         r = self.req_session.get(self.url)
         self.soup = BeautifulSoup(r.text, 'html.parser')
 

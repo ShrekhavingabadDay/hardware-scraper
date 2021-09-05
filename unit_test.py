@@ -14,7 +14,7 @@ ha_scraper = hardverapro.hardverapro_scraper(
                 env.get("HARDVERAPRO_MODOSIT"),
                 env.get("UID_DIR"),
                 env.get("LINK_DIR"),
-                "processzor"
+                "5700"
             )
 
 ha_scraper.init_session("uj")
@@ -30,11 +30,12 @@ async def _background_task():
     channel = bot.get_channel(id=817122060618825771)
     while not bot.is_closed():
         message_to_send = create_link_message()
-
-        if message_to_send != '':
-            await channel.send('Új hirdetések\n' + message_to_send)
-        else:
-            await channel.send('Nincs új hirdetés')
+        for server in bot.servers:
+            for channel in server.channels:
+                if message_to_send != '':
+                    await channel.send('Új hirdetések\n' + message_to_send)
+                else:
+                    await channel.send('Nincs új hirdetés')
 
         await asyncio.sleep(waiting_time)
 

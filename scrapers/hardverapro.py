@@ -78,6 +78,7 @@ class HardverApro:
         self.construate_modosit_url()
 
     def reload(self):
+        print("reloading: " + self.url)
         r = self.req_session.get(self.url)
         self.soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -89,6 +90,7 @@ class HardverApro:
         self.req_session.post(self.modosit_url, sorting_payloads[sorting_keywords[sorting_keyword]])
 
         self.reload()
+
     def get_result_count(self):
 
         # this is where all the ads are found (and also the result count)
@@ -99,10 +101,10 @@ class HardverApro:
         self.result_count = [int(s) for s in full_text.split() if s.isdigit()][0]
 
     def set_url_offset(self, offset):
-        param_index = None
-        for i in range(len(self.url)-1, 0):
+        for i in range(len(self.url)-1, 0, -1):
             if self.url[i] == "=":
                 param_index = i+1
+                break
         self.url = self.url[:param_index] + str(offset)
 
     def scrape_all_links(self):
@@ -123,7 +125,10 @@ class HardverApro:
 
             all_links += links
 
-            all_uids += [uad['data-uadid'] for uad in self.ad_list.find_all("li", {"class":"media"})]
+            new_uids = [uad['data-uadid'] for uad in self.ad_list.find_all("li", {"class":"media"}) if uad['data-uadid'] not in ad_ids]
+
+            all_uids += new_uids
+            ad_ids += new_uids
 
             self.ad_list = None
 

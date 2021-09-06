@@ -7,9 +7,11 @@ bot = commands.Bot(command_prefix="!")
 
 env = dotenv.getenv()
 
-waiting_time = 60
+waiting_time = 20
 
+db_reset_iteration_counter = 0
 
+db_reset_iteration = 3 
 
 ha_scraper = hardverapro.hardverapro_scraper(
                 env.get("HARDVERAPRO"),
@@ -23,7 +25,10 @@ ha_scraper.init_session("uj")
 
 ha_scraper.scrape_all_links()
 
-channels = [817122060618825771, 884140933141102725]
+channels = [817122060618825771]
+
+def reset_dbs():
+    ha_scraper.reset_db()
 
 def create_link_message():
     all_links = ha_scraper.scrape_all_links()
@@ -32,7 +37,19 @@ def create_link_message():
 async def _background_task():
     await bot.wait_until_ready()
 
+    db_reset_iteration_counter = 0
+
     while not bot.is_closed():
+
+        db_reset_iteration_counter += 1
+
+        if db_reset_iteration_counter == db_reset_iteration:
+
+            db_reset_iteration_counter = 0
+
+            reset_dbs()
+            await channel.send('DB reset')
+            continue
 
         for channel_id in channels:
 
@@ -43,7 +60,7 @@ async def _background_task():
             if message_to_send != '':
                 await channel.send('Új hirdetések\n' + message_to_send)
             else:
-                await channel.send('Nincs új hirdetés')
+                await channel.send('.')
 
         await asyncio.sleep(waiting_time)
 

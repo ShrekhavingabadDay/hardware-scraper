@@ -1,6 +1,9 @@
+# TODO: switch to using url_constructor class for setting the params for a bot
+
 import requests
 import os
 from bs4 import BeautifulSoup
+from lib import url_constructor
 
 sorting_payloads = [
     {
@@ -25,7 +28,7 @@ sorting_keywords = {
 
 class HardverApro:
 
-    def __init__(self, url, modosit_url, data_dir, link_dir, stext=None ):
+    def __init__(self, url, modosit_url, data_dir, link_dir, config_object ):
         self.url = url
         self.modosit_url = modosit_url
         self.req_session = requests.Session()
@@ -34,9 +37,24 @@ class HardverApro:
         self.soup = None
         self.result_count = None
         self.ad_list = None
+        self.url_constructor = url_constructor.url_constructor(url)
 
-        if stext:
-            self.set_search_term(stext)
+        try:
+            self.set_search_term(config_object["stext"])
+        except KeyError:
+            raise KeyError("The given configuration does not contain 'stext' parameter.")
+        try:
+            self.name(config_object["name"])
+        except KeyError:
+            raise KeyError("The given configuration does not contain 'name' parameter.")
+        try:
+            self.set_search_term(config_object["stext"])
+        except KeyError:
+            raise KeyError("The given configuration does not contain 'stext' parameter.")
+        try:
+            self.set_search_term(config_object["stext"])
+        except KeyError:
+            raise KeyError("The given configuration does not contain 'stext' parameter.")
 
     def jegelve(self, ad):
         if ad.find('p', {'class':'mt-1'}):
@@ -106,6 +124,16 @@ class HardverApro:
                 param_index = i+1
                 break
         self.url = self.url[:param_index] + str(offset)
+
+    def reset_db(self):
+        try:
+            with open(os.path.join(self.link_dir, self.stext), 'r+') as link_f:
+                link_f.truncate(0)
+            with open(os.path.join(self.data_dir, self.stext), 'r+') as id_f:
+                id_f.truncate(0)
+        except FileNotFoundError:
+            raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
+        self.scrape_all_links()
 
     def scrape_all_links(self):
 

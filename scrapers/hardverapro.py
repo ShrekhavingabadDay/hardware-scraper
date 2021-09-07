@@ -20,6 +20,13 @@ sorting_payloads = [
     }
 ]
 
+scraper_config_object = {
+    "name":None,
+    "stext":None,
+    "min_price":None,
+    "max_price":None
+}
+
 sorting_keywords = {
     "uj":1,
     "ar_nov":2,
@@ -38,23 +45,25 @@ class HardverApro:
         self.result_count = None
         self.ad_list = None
         self.url_constructor = url_constructor.url_constructor(url)
+        self.modosit_url_constructor = url_constructor.url_constructor(modosit_url)
+        self.config_object = config_object
 
-        try:
-            self.set_search_term(config_object["stext"])
-        except KeyError:
-            raise KeyError("The given configuration does not contain 'stext' parameter.")
-        try:
-            self.name(config_object["name"])
-        except KeyError:
-            raise KeyError("The given configuration does not contain 'name' parameter.")
-        try:
-            self.set_search_term(config_object["stext"])
-        except KeyError:
-            raise KeyError("The given configuration does not contain 'stext' parameter.")
-        try:
-            self.set_search_term(config_object["stext"])
-        except KeyError:
-            raise KeyError("The given configuration does not contain 'stext' parameter.")
+        if not config_object["name"]:
+            raise AttributeError("Please initialize the bot with a valid name!")
+
+        if config_object:
+            self.set_url_params()
+        else:
+            raise AttributeError("Invalid config object for scraper!")
+
+    def modify_config_object(self, param_to_modify):
+        for key in param_to_modify:
+            try:
+                self.config_object[key] = param_to_modify[key]
+            except KeyError:
+                return("Invalid configuration for " + self.config_object["name"])
+        return "Configuration for " + self.config_object["name"] + " successful!"
+    
 
     def jegelve(self, ad):
         if ad.find('p', {'class':'mt-1'}):
@@ -63,40 +72,48 @@ class HardverApro:
     
     def write_ids_to_file(self, array):
         try:
-            with open(os.path.join(self.data_dir, self.stext), 'a') as f:
+            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'a') as f:
                 f.writelines([item + '\n' for item in array])
         except FileNotFoundError:
             raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
 
     def write_links_to_file(self, array):
         try:
-            with open(os.path.join(self.link_dir, self.stext), 'a') as f:
+            with open(os.path.join(self.link_dir, self.config_object["stext"]), 'a') as f:
                 f.writelines([item + '\n' for item in array])
         except FileNotFoundError:
             raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
 
     def get_ids_from_file(self):
         try:
-            with open(os.path.join(self.data_dir, self.stext), 'r') as file:
+            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'r') as file:
                 ad_ids = [line.strip() for line in file.readlines()]
 
             return ad_ids
         except FileNotFoundError:
             return []
 
-    def set_url_search_term(self):
-        self.url = self.url[:45] + self.stext + self.url[45:]
+    def set_url_params(self):
+        
+        try:
+            self.url = self.url_constructor.set_param({"stext":self.config_object["stext"],
+                                                   "minprice":self.config_object["min_price"],
+                                                   "maxprice":self.config_object["max_price"]
+                                                  })
+        except KeyError:
+            print("Incorrect config object...")
 
     def construate_modosit_url(self):
-        self.modosit_url = self.modosit_url + self.url
+
+        self.modosit_url = self.modosit_url_constructor.set_param({"url":self.url})
 
     def set_search_term(self, search_term):
-        self.stext = search_term
+        self.config_object["stext"] = search_term
         self.set_url_search_term()
         self.construate_modosit_url()
 
     def reload(self):
-        # print("reloading: " + self.url)
+
         r = self.req_session.get(self.url)
         self.soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -127,9 +144,9 @@ class HardverApro:
 
     def reset_db(self):
         try:
-            with open(os.path.join(self.link_dir, self.stext), 'r+') as link_f:
+            with open(os.path.join(self.link_dir, self.config_object["stext"]), 'r+') as link_f:
                 link_f.truncate(0)
-            with open(os.path.join(self.data_dir, self.stext), 'r+') as id_f:
+            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'r+') as id_f:
                 id_f.truncate(0)
         except FileNotFoundError:
             raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
@@ -169,6 +186,9 @@ class HardverApro:
         self.write_ids_to_file( all_uids )
         self.write_links_to_file( all_links )
 
-        return all_links
+        if len(all_links) == 0:
+            return None
+
+        return  (self.config_object["name"] + '\n'.join(all_links))
 
 hardverapro_scraper = HardverApro

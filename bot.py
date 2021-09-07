@@ -1,3 +1,6 @@
+# TODO: * add command configuration possibility
+#       * fix weird bug with channels
+
 from scrapers import hardverapro
 import dotenv
 import asyncio
@@ -7,32 +10,57 @@ bot = commands.Bot(command_prefix="!")
 
 env = dotenv.getenv()
 
-waiting_time = 20
+waiting_time = 60
 
 db_reset_iteration_counter = 0
 
-db_reset_iteration = 3 
+db_reset_iteration = 10
 
-ha_scraper = hardverapro.hardverapro_scraper(
-                env.get("HARDVERAPRO"),
-                env.get("HARDVERAPRO_MODOSIT"),
-                env.get("UID_DIR"),
-                env.get("LINK_DIR"),
-                "5700"
-            )
+ha_scraper_horde = [
 
-ha_scraper.init_session("uj")
+    hardverapro.hardverapro_scraper(
+                    env.get("HARDVERAPRO"),
+                    env.get("HARDVERAPRO_MODOSIT"),
+                    env.get("UID_DIR"),
+                    env.get("LINK_DIR"),
+                    {
+                        "name":"Processzor",
+                        "stext":"processzor",
+                        "min_price":"100000",
+                        "max_price":"500000"
+                    }
+                ),
+    hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO"),
+            env.get("HARDVERAPRO_MODOSIT"),
+            env.get("UID_DIR"),
+            env.get("LINK_DIR"),
+            {
+                "name":"Videókártya",
+                "stext":"videokartya",
+                "min_price":"100000",
+                "max_price":"500000"
+            }
+        )
+]
 
-ha_scraper.scrape_all_links()
+for ha_scraper in ha_scraper_horde: 
+    ha_scraper.init_session("uj")
+    ha_scraper.scrape_all_links()
 
-channels = [817122060618825771]
+# channels = [817122060618825771]
 
 def reset_dbs():
     ha_scraper.reset_db()
 
 def create_link_message():
-    all_links = ha_scraper.scrape_all_links()
-    return '\n.\n.'.join(all_links)
+    all_messages = ""
+    for ha_scraper in ha_scraper_horde:
+        try:
+            all_messages += "\n." + ha_scraper.scrape_all_links()
+        except TypeError:
+            pass
+    return all_messages
 
 async def _background_task():
     await bot.wait_until_ready()
@@ -50,18 +78,14 @@ async def _background_task():
             reset_dbs()
             await channel.send('DB reset')
             continue
+        
+        for guild in bot.guilds:
+            for channel in guild.text_channels:
 
-        for channel_id in channels:
+                message_to_send = create_link_message()
 
-            channel = bot.get_channel(id=channel_id)
-
-            message_to_send = create_link_message()
-
-            if message_to_send != '':
-                await channel.send('Új hirdetések\n' + message_to_send)
-            else:
-                await channel.send('.')
-
+                if message_to_send:
+                    await channel.send(message_to_send)
         await asyncio.sleep(waiting_time)
 
 @bot.event

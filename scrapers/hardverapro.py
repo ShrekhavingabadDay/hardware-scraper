@@ -3,7 +3,7 @@
 import requests
 import os
 from bs4 import BeautifulSoup
-from lib import url_constructor
+from library import url_constructor
 
 sorting_payloads = [
     {

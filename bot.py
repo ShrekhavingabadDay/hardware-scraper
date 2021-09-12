@@ -5,7 +5,7 @@ import dotenv
 import asyncio
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(command_prefix="$")
 
 env = dotenv.getenv()
 
@@ -15,13 +15,17 @@ db_reset_iteration_counter = 0
 
 db_reset_iteration = 10
 
+uid_dir = env.get("UID_DIR")
+link_dir = env.get("LINK_DIR")
+modosito_url = env.get("HARDVERAPRO_MODOSIT")
+
 ha_scraper_horde = [
 
     hardverapro.hardverapro_scraper(
                     env.get("HARDVERAPRO_VIDEOKARTYA"),
-                    env.get("HARDVERAPRO_MODOSIT"),
-                    env.get("UID_DIR"),
-                    env.get("LINK_DIR"),
+                    modosito_url,
+                    uid_dir,
+                    link_dir,
                     {
                         "name":"5700-as",
                         "stext":"5700",
@@ -31,9 +35,9 @@ ha_scraper_horde = [
                 ),
     hardverapro.hardverapro_scraper(
             env.get("HARDVERAPRO_ALAPLAP"),
-            env.get("HARDVERAPRO_MODOSIT"),
-            env.get("UID_DIR"),
-            env.get("LINK_DIR"),
+            modosito_url,
+            uid_dir,
+            link_dir,
             {
                 "name":"H81 PRO",
                 "stext":"h81+pro",
@@ -43,9 +47,9 @@ ha_scraper_horde = [
         ),
  hardverapro.hardverapro_scraper(
             env.get("HARDVERAPRO_ALAPLAP"),
-            env.get("HARDVERAPRO_MODOSIT"),
-            env.get("UID_DIR"),
-            env.get("LINK_DIR"),
+            modosito_url,
+            uid_dir,
+            link_dir,
             {
                 "name":"H110 PRO",
                 "stext":"h110+pro",
@@ -55,9 +59,9 @@ ha_scraper_horde = [
         ),
  hardverapro.hardverapro_scraper(
             env.get("HARDVERAPRO_ALAPLAP"),
-            env.get("HARDVERAPRO_MODOSIT"),
-            env.get("UID_DIR"),
-            env.get("LINK_DIR"),
+            modosito_url,
+            uid_dir,
+            link_dir,
             {
                 "name":"H110 D3A",
                 "stext":"h110+d3a",
@@ -65,9 +69,138 @@ ha_scraper_horde = [
                 "max_price":""
             }
         ),
-
-
-
+    hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_ALAPLAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"H81",
+                "stext":"h81",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_ALAPLAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"B250",
+                "stext":"b250",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_VIDEOKARTYA"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"5700XT",
+                "stext":"5700xt",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_VIDEOKARTYA"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"580",
+                "stext":"580",
+                "min_price":"90000",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_VIDEOKARTYA"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"570",
+                "stext":"570",
+                "min_price":"90000",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_VIDEOKARTYA"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"3080",
+                "stext":"3080",
+                "min_price":"600000",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_VIDEOKARTYA"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"3070",
+                "stext":"3070",
+                "min_price":"420000",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_TAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"Táp - 1200 W",
+                "stext":"1200 W",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_TAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"Táp - 1200 Watt",
+                "stext":"1200 Watt",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_TAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"Táp - 1200W",
+                "stext":"1200W",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_TAP"),
+            modosito_url,
+            uid_dir,
+            link_dir,
+            {
+                "name":"Táp - 1200Watt",
+                "stext":"1200Watt",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
 ]
 
 for ha_scraper in ha_scraper_horde: 
@@ -111,6 +244,22 @@ async def _background_task():
                     await channel.send(message_to_send)
 
         await asyncio.sleep(waiting_time)
+
+@bot.command()
+async def beallit(ctx, name, param, value):
+    for ha_scraper in ha_scraper_horde:
+        if ha_scraper.get_param("name") == name:
+            ha_scraper.set_param(param, value)
+            await ctx.send("{} {} paramétere beállítva {} értékre".format(name, param, value))
+            return
+
+@bot.command()
+async def botlista(ctx):
+    botlista = ""
+    for ha_scraper in ha_scraper_horde:
+        botlista += "Név: {} - keresés: {}\n".format(ha_scraper.get_param("name"), ha_scraper.get_param("stext"))
+
+    await ctx.send(botlista)
 
 @bot.event
 async def on_ready():

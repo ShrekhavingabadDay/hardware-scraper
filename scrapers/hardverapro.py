@@ -1,4 +1,3 @@
-# TODO: switch to using url_constructor class for setting the params for a bot
 
 import requests
 import os
@@ -55,6 +54,12 @@ class HardverApro:
             self.set_url_params()
         else:
             raise AttributeError("Invalid config object for scraper!")
+
+    def set_param(self, param_name, param_value):
+        self.config_object[param_name] = param_value
+
+    def get_param(self, param_name):
+        return self.config_object[param_name]
 
     def modify_config_object(self, param_to_modify):
         for key in param_to_modify:

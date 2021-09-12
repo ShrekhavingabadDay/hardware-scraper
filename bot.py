@@ -1,5 +1,4 @@
 # TODO: * add command configuration possibility
-#       * fix weird bug with channels
 
 from scrapers import hardverapro
 import dotenv
@@ -19,36 +18,61 @@ db_reset_iteration = 10
 ha_scraper_horde = [
 
     hardverapro.hardverapro_scraper(
-                    env.get("HARDVERAPRO"),
+                    env.get("HARDVERAPRO_VIDEOKARTYA"),
                     env.get("HARDVERAPRO_MODOSIT"),
                     env.get("UID_DIR"),
                     env.get("LINK_DIR"),
                     {
-                        "name":"Processzor",
-                        "stext":"processzor",
-                        "min_price":"100000",
-                        "max_price":"500000"
+                        "name":"5700-as",
+                        "stext":"5700",
+                        "min_price":"",
+                        "max_price":""
                     }
                 ),
     hardverapro.hardverapro_scraper(
-            env.get("HARDVERAPRO"),
+            env.get("HARDVERAPRO_ALAPLAP"),
             env.get("HARDVERAPRO_MODOSIT"),
             env.get("UID_DIR"),
             env.get("LINK_DIR"),
             {
-                "name":"Videókártya",
-                "stext":"videokartya",
-                "min_price":"100000",
-                "max_price":"500000"
+                "name":"H81 PRO",
+                "stext":"h81+pro",
+                "min_price":"",
+                "max_price":""
             }
-        )
+        ),
+ hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_ALAPLAP"),
+            env.get("HARDVERAPRO_MODOSIT"),
+            env.get("UID_DIR"),
+            env.get("LINK_DIR"),
+            {
+                "name":"H110 PRO",
+                "stext":"h110+pro",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+ hardverapro.hardverapro_scraper(
+            env.get("HARDVERAPRO_ALAPLAP"),
+            env.get("HARDVERAPRO_MODOSIT"),
+            env.get("UID_DIR"),
+            env.get("LINK_DIR"),
+            {
+                "name":"H110 D3A",
+                "stext":"h110+d3a",
+                "min_price":"",
+                "max_price":""
+            }
+        ),
+
+
+
 ]
 
 for ha_scraper in ha_scraper_horde: 
     ha_scraper.init_session("uj")
     ha_scraper.scrape_all_links()
-
-# channels = [817122060618825771]
 
 def reset_dbs():
     ha_scraper.reset_db()
@@ -71,21 +95,21 @@ async def _background_task():
 
         db_reset_iteration_counter += 1
 
+
         if db_reset_iteration_counter == db_reset_iteration:
 
             db_reset_iteration_counter = 0
 
             reset_dbs()
-            await channel.send('DB reset')
             continue
         
-        for guild in bot.guilds:
-            for channel in guild.text_channels:
+        message_to_send = create_link_message()
 
-                message_to_send = create_link_message()
-
-                if message_to_send:
+        if message_to_send:
+            for guild in bot.guilds:
+                for channel in guild.text_channels:
                     await channel.send(message_to_send)
+
         await asyncio.sleep(waiting_time)
 
 @bot.event

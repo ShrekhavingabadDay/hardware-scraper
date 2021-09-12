@@ -131,9 +131,13 @@ class HardverApro:
         # this is where all the ads are found (and also the result count)
         self.ad_list = self.soup.find('div',{'class':'uad-list'}).find('ul',{'class':'list-unstyled'})
 
-        full_text = self.ad_list.find('li',{'class':None}).text
+        try:
+            full_text = self.ad_list.find('li',{'class':None}).text
+        except AttributeError:
+            return True
 
         self.result_count = [int(s) for s in full_text.split() if s.isdigit()][0]
+        return False
 
     def set_url_offset(self, offset):
         for i in range(len(self.url)-1, 0, -1):
@@ -154,7 +158,9 @@ class HardverApro:
 
     def scrape_all_links(self):
 
-        self.get_result_count()
+        if self.get_result_count():
+            return None
+
         repeat_count = (self.result_count // 50) + 1
         current_offset = 50
         all_links = []

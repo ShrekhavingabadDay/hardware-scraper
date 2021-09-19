@@ -20,6 +20,7 @@ sorting_payloads = [
 ]
 
 scraper_config_object = {
+    "hardware_type":None,
     "name":None,
     "stext":None,
     "min_price":None,
@@ -200,6 +201,7 @@ class HardverApro:
         if len(all_links) == 0:
             return None
 
-        return  (self.config_object["name"] + '\n'.join(all_links))
+        return  ({"hardvertipus":self.config_object["hardware_type"],
+                  "message":self.config_object["name"] + '\n'.join(all_links)})
 
 hardverapro_scraper = HardverApro

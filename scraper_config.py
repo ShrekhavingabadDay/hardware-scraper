@@ -18,6 +18,12 @@ uid_dir = env.get("UID_DIR")
 link_dir = env.get("LINK_DIR")
 modosito_url = env.get("HARDVERAPRO_MODOSIT")
 
+server_names = {
+    "videokartya":"videókártyák",
+    "alaplap":"alaplapok",
+    "tap":"tápegységek"
+}
+
 config_template_map = {
         "videokartya":ha_videokartya,
         "alaplap":ha_alaplap,
@@ -42,6 +48,7 @@ def configure(filepath):
                     uid_dir,
                     link_dir,
                     {
+                        "hardware_type":server_names[params[0]],
                         "name":params[1],
                         "stext":params[2],
                         "min_price":params[3],

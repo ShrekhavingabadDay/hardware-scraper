@@ -26,13 +26,16 @@ def reset_dbs():
     ha_scraper.reset_db()
 
 def create_link_message():
-    all_messages = ""
+    
+    final_message_object = {}    
+
     for ha_scraper in ha_scraper_horde:
-        try:
-            all_messages += "\n." + ha_scraper.scrape_all_links()
-        except TypeError:
-            pass
-    return all_messages
+        bot_result = ha_scraper.scrape_all_links()
+
+        if bot_result:
+            final_message_object[bot_result["hardvertipus"]] = bot_result["message"]
+
+    return final_message_object
 
 async def _background_task():
     await bot.wait_until_ready()
@@ -47,16 +50,23 @@ async def _background_task():
         if db_reset_iteration_counter == db_reset_iteration:
 
             db_reset_iteration_counter = 0
-
+            
             reset_dbs()
-            continue
-        
-        message_to_send = create_link_message()
 
-        if message_to_send:
             for guild in bot.guilds:
                 for channel in guild.text_channels:
-                    await channel.send(message_to_send)
+                    if channel.name == "általános":
+                        await channel.send("ver0.9.2 - Ping")
+
+            continue
+        
+        message_object_to_send = create_link_message()
+
+        for key in message_object_to_send:
+            for guild in bot.guilds:
+                for channel in guild.text_channels:
+                    if channel.name == key:
+                        await channel.send(message_object_to_send[key])
 
         await asyncio.sleep(waiting_time)
 

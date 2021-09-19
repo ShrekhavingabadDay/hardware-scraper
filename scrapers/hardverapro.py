@@ -78,21 +78,21 @@ class HardverApro:
     
     def write_ids_to_file(self, array):
         try:
-            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'a') as f:
+            with open(os.path.join(self.data_dir, self.config_object["name"]), 'a') as f:
                 f.writelines([item + '\n' for item in array])
         except FileNotFoundError:
             raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
 
     def write_links_to_file(self, array):
         try:
-            with open(os.path.join(self.link_dir, self.config_object["stext"]), 'a') as f:
+            with open(os.path.join(self.link_dir, self.config_object["name"]), 'a') as f:
                 f.writelines([item + '\n' for item in array])
         except FileNotFoundError:
             raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
 
     def get_ids_from_file(self):
         try:
-            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'r') as file:
+            with open(os.path.join(self.data_dir, self.config_object["name"]), 'r') as file:
                 ad_ids = [line.strip() for line in file.readlines()]
 
             return ad_ids
@@ -154,12 +154,12 @@ class HardverApro:
 
     def reset_db(self):
         try:
-            with open(os.path.join(self.link_dir, self.config_object["stext"]), 'r+') as link_f:
+            with open(os.path.join(self.link_dir, self.config_object["name"]), 'r+') as link_f:
                 link_f.truncate(0)
-            with open(os.path.join(self.data_dir, self.config_object["stext"]), 'r+') as id_f:
+            with open(os.path.join(self.data_dir, self.config_object["name"]), 'r+') as id_f:
                 id_f.truncate(0)
         except FileNotFoundError:
-            raise FileNotFoundError("Please make sure to run configure.sh before running the program!")
+            pass
         self.scrape_all_links()
 
     def scrape_all_links(self):

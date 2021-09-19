@@ -66,7 +66,20 @@ async def _background_task():
             for guild in bot.guilds:
                 for channel in guild.text_channels:
                     if channel.name == key:
-                        await channel.send(message_object_to_send[key])
+                        try:
+                            await channel.send(message_object_to_send[key])
+                        # handle case of too many new ads = too long message
+                        except:
+                            message_to_send = message_object_to_send[key]
+                            i = 0
+                            while i < (len(message_to_send) - 1):
+
+                                message_end_index = max(200, len(message_to_send) - i - 1)
+
+                                await channel.send(message_to_send[i:(i+message_end_index)])
+
+                                i+=message_end_index
+
 
         await asyncio.sleep(waiting_time)
 

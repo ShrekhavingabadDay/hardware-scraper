@@ -4,9 +4,13 @@ mkdir data && cd data && mkdir ids && mkdir links &&
 # create config file with template
 touch .default_scraperconfig &&
 
+echo "created default_scraperconfig" &&
+
 echo "# hardvertipus*bot_neve*keresesi_ertek*min_ar*max_ar" >> .default_scraperconfig &&
 
 touch .env_template &&
+
+echo "created env_template" && 
 
 echo "HARDVERAPRO_MODOSIT=\"https://hardverapro.hu/muvelet/beallitasok/modosit.php?mode=uad&url=\"" >> .env_template &&
 

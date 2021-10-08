@@ -1,5 +1,6 @@
 # TODO: * add command configuration possibility
 
+from datetime import datetime
 from scrapers import hardverapro
 import dotenv
 import asyncio
@@ -18,9 +19,18 @@ db_reset_iteration = 10
 
 ha_scraper_horde = scraper_config.configure(env.get("CONFIG_FILE_PATH"))
 
+prev_date = datetime.now()
+
 for ha_scraper in ha_scraper_horde: 
     ha_scraper.init_session("uj")
     ha_scraper.scrape_all_links()
+
+def _day_has_passed():
+    current_date = datetime.now()
+    if (current_date - prev_date).days == 1:
+        prev_date = current_date
+        return True
+    return False
 
 def reset_dbs():
     ha_scraper.reset_db()
@@ -52,12 +62,11 @@ async def _background_task():
             db_reset_iteration_counter = 0
             
             reset_dbs()
-
-            for guild in bot.guilds:
-                for channel in guild.text_channels:
-                    if channel.name == "általános":
-                        await channel.send("ver0.9.2 - Ping")
-
+            if _day_has_passed():
+                for guild in bot.guilds:
+                    for channel in guild.text_channels:
+                        if channel.name == "általános":
+                            await channel.send("ver0.9.2 - Ping")
             continue
         
         message_object_to_send = create_link_message()

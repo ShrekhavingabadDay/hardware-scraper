@@ -176,7 +176,11 @@ class HardverApro:
         for i in range(repeat_count):
 
             if not self.ad_list:
-                self.ad_list = self.soup.find('div',{'class':'uad-list'}).find('ul',{'class':'list-unstyled'})
+                try:
+                    self.ad_list = self.soup.find('div',{'class':'uad-list'}).find('ul',{'class':'list-unstyled'})
+                except AttributeError:
+                    print("Nem található az oldalon hirdetés!")
+                    continue
 
             links = [one_ad.find('a')["href"] for one_ad in self.ad_list.find_all("li", {"class", "media"}) if (one_ad["data-uadid"] not in ad_ids)]
 
